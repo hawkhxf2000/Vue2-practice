@@ -1,6 +1,6 @@
-## Vue项目知识
+# Vue项目知识
 
-### 安装Vue 2 脚手架并生成项目
+## 安装Vue 2 脚手架并生成项目
 
 - 安装脚手架：
 
@@ -33,7 +33,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned CurrentUser
 npm run serve
 ~~~
 
-### 关闭Eslint警告信息
+## 关闭Eslint警告信息
 
 在vue.config.js中加入下面语句
 
@@ -43,7 +43,7 @@ module.exports = {
 }
 ~~~
 
-### ref标签
+## ref标签
 
 在标签原生DOM上使用ref替代id标签，可以直接在组件js中使用this.$refs.ref名来获得原生DOM，如果在子组件上使用ref,可以获得子组件
 
@@ -56,7 +56,7 @@ module.exports = {
 console.log(this.$refs.title, this.$refs.compSchool)
 ~~~
 
-### 利用组件的props传参（父组件向子组件传值）
+## 利用组件的props传参（父组件向子组件传值）
 
 父组件
 
@@ -74,7 +74,7 @@ props:['name','sex','age']
 }
 ~~~
 
-#### 父组件中传值方法：
+### 父组件中传值方法：
 
 在传递非字符串的参数时，需要使用v-bind或:来绑定对应变量，从而使其成为JS表达式而非字符串。比如：
 
@@ -105,7 +105,7 @@ export default {
 </script>
 ~~~
 
-#### 三种props的接收方式
+### 三种props的接收方式
 
 - 简单模式
 
@@ -145,7 +145,7 @@ props:{
 如果内部也有一个与props内变量名相同的变量，系统会报错，而且Props传入的数据优先级更高，如果有可能会修改传入数据，需要在子组件内重新声明一个
 不同名变量，再将props传入的数据赋值给新变量
 
-### mixin混合（复用配置）
+## mixin混合（复用配置）
 
 当多个组件具有同样的配置(方法，数据，计算属性等)时，可以使用mixin将同样的配置抽离出来，在多个组件应用
 mixin.js
@@ -181,7 +181,7 @@ mixins: [mixin]
 如果mixin中有变量与组件中的变量名相同，数据以组件中的数据为准
 如果mixin与组件都有相同的生命周期钩子函数，则两个钩子函数都执行
 
-#### 全局引入
+### 全局引入
 
 在main.js中引入
 
@@ -197,7 +197,7 @@ new Vue({
 }).$mount('#app')
 ~~~
 
-### 插件plugin
+## 插件plugin
 
 插件是用来增强Vue的，相当于给Vue增加一些预先定义的方法。
 构建插件的方法：
@@ -254,9 +254,9 @@ import plugins from "@/plugins"
 Vue.use(plugins)
 ~~~
 
-### 利用组件的自定义事件进行子组件向父组件传值
+## 利用组件的自定义事件进行子组件向父组件传值
 
-#### 第一种方法： 通过父组件给子组件绑定一个自定义事件，实现子组件向父组件传值
+### 第一种方法： 通过父组件给子组件绑定一个自定义事件，实现子组件向父组件传值
 
 template部分
 
@@ -293,7 +293,7 @@ this.$emit('getStudentName',this.name)
 }
 ~~~
 
-#### 第二种方法： 直接拿到子组件实例，使用$on在父组件挂载时在子组件上绑定自定义事件，使用更加灵活
+### 第二种方法： 直接拿到子组件实例，使用$on在父组件挂载时在子组件上绑定自定义事件，使用更加灵活
 
 template部分
 
@@ -365,7 +365,7 @@ getStudentName(name, ...)
 {  //...会接收传过来的数据并形成一个数组[666,777,888]
 ~~~
 
-#### 自定义事件解绑
+### 自定义事件解绑
 
 在子组件中使用$off指令对事件进行解绑
 
@@ -385,7 +385,7 @@ this.$off()
 this.$destroy()
 ~~~
 
-### 全局事件总线(任意组件间通讯)
+## 全局事件总线(任意组件间通讯)
 
 - 在main.js安装全局事件总线
 
@@ -428,7 +428,7 @@ this.$bus.$off('hello')
 }
 ~~~
 
-### $nextTick()钩子函数
+## $nextTick()钩子函数
 
 $nextTIck钩子函数可以将函数中的回调延迟到下次DOM更新循环之后再执行
 
@@ -462,8 +462,8 @@ methods: {
 }
 ~~~
 
-### 动画与过渡效果
-#### 单个元素实现动画效果
+## 动画与过渡效果
+### 单个元素实现动画效果
 在模板内使用transition标签包裹要实现动画效果的部分
 ~~~html
 <!--name定义css类选择器中的头部（第一个单词，如不设置name则默认为V-开头）-->
@@ -517,7 +517,7 @@ h1{
 }
 ~~~
 
-#### 多个元素实现动画效果
+### 多个元素实现动画效果
 使用<transition-group>标签来实现多个元素的动画效果，注意在元素中需要加入key属性来区分元素的不同
 ~~~html
 <transition-group name="fade" appear>
@@ -526,7 +526,7 @@ h1{
     </transition-group>
 ~~~
 
-#### 集成第三方动画库（animate.css)
+### 集成第三方动画库（animate.css)
 - 安装animate.css
 ~~~
 npm install animate.css --save
@@ -549,3 +549,95 @@ npm install animate.css --save
     </transition>
   ~~~
   
+## 插槽
+组件调用时可能需要在复用同一个子组件的结构时需要显示一些不同的内容. 而插槽就是在子组件设置一个空位，让组件调用者可以在调用时插入一些定制化的结构（先挖坑再填）
+### 默认插槽
+子组件端
+~~~vue
+<!--Category子组件-->
+<template>
+<div class="container">
+  <h3>{{title}}分类</h3>
+<!--  插槽中可以设置默认值,如果组件调用者没有传入结构,则显示默认值-->
+  <slot>我是默认值</slot>
+</div>
+</template>
+~~~
+组件调用端
+~~~vue
+<!--App组件-->
+<Category title="美食">
+<!--将img插入插槽中,在子组件内显示-->
+     <img src="https://ichef.bbci.co.uk/news/999/cpsprodpb/15951/production/_117310488_16.jpg" alt="">
+   </Category>
+~~~
+### 具名插槽
+当一个子组件中可能存在多个插槽时,需要对插槽命名以便于在组件调用方准确插入适当的结构  
+子组件端
+~~~vue
+<template>
+<div class="container">
+  <h3>{{title}}分类</h3>
+<!--  在slot中使用name属性标识-->
+  <slot name="center">我是默认值</slot>
+  <slot name="footer"></slot>
+</div>
+</template>
+~~~
+组件调用端
+~~~vue
+<Category title="美食">
+<!--在组件调用端使用v-slot来对接同名的slot,将内容插入对应的slot-->
+     <template v-slot:center>
+     <img src="https://ichef.bbci.co.uk/news/999/cpsprodpb/15951/production/_117310488_16.jpg" alt="">
+     </template>
+
+     <template v-slot:footer>
+       <a href="">所需食材</a>
+       <a href="">烹饪流程</a>
+     </template>
+   </Category>
+~~~
+### 作用域插槽
+当数据保存在子组件时，组件调用者无法使用子组件的数据来渲染页面，这时需要使用作用域插槽将数据传递到组件调用方来进行渲染  
+子组件端
+~~~vue
+<template>
+<div class="container">
+  <h3>{{title}}分类</h3>
+  <slot name="center" :youxis="games" >我是默认值</slot>
+  <slot name="footer" :movies="movies"></slot>
+</div>
+</template>
+~~~
+~~~vue
+data(){
+    return{
+      games:['古墓丽影','半条命','最终幻想7','无主之地'],
+      movies:['生化危机','壮志凌云']
+    }
+  }
+~~~
+组件调用端
+~~~vue
+<Category ref="games" title="游戏">
+      <!--      slotProps是一个对象，里面包含了在子组件中绑定的所有数据，我们需要从中提取games这个属性才能获得这个部分相对应的数据，这个名字需要与子组件被绑定的属性名（youxis）一致-->
+      <template v-slot:center="slotProps">
+        <ul>
+          <li v-for="(game, index) in slotProps.youxis" :key="index">{{ game }}</li>
+        </ul>
+      </template>
+    </Category>
+
+    <Category title="影视">
+      <template v-slot:center>
+        <video controls src="https://youtu.be/uIdjcDTc9Vk"/>
+      </template>
+
+      <template ref="movies" v-slot:footer="slotProps">
+        <ul>
+          <li v-for="(movie, index) in slotProps.movies" :key="index">{{ movie }}</li>
+        </ul>
+      </template>
+    </Category>
+~~~
