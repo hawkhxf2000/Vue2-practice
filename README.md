@@ -641,3 +641,53 @@ data(){
       </template>
     </Category>
 ~~~
+## Vuex
+###安装Vuex
+~~~
+npm install vuex@3 --save
+~~~
+
+### 搭建环境
+在src文件夹下创建一个store文件夹，在其中创建index.js文件
+~~~js
+/该文件用于创建Vuex中最为核心的Store
+import Vue from "vue";
+//引入Vuex
+import Vuex from "vuex";
+//应用Vuex插件
+Vue.use(Vuex)
+
+//定义actions,用于相应组件中的动作
+const actions= {
+
+}
+
+//定义mutations, 用于操作数据(state)
+const mutations = {
+
+}
+
+//定义state,用于存储数据
+const state = {
+
+}
+
+export default new Vuex.Store({
+  //实际上使用的键值对同名时的简写形式
+  actions,
+  mutations,
+  state
+})
+~~~
+在main.js文件中引入store
+~~~js
+import Store from "@/store";
+......
+new Vue({
+  render: h => h(App),
+  Store,
+  beforeCreate() {
+    Vue.prototype.$bus = this  //安装全局事件总线
+  }
+~~~
+
