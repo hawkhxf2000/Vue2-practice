@@ -691,3 +691,173 @@ new Vue({
   }
 ~~~
 
+### 应用Vuex模式
+组件端
+~~~html
+<template>
+  ......
+  <h1>当前求和为：{{ $store.state.sum }}</h1>
+  <select v-model="number">
+    <option :value="1">1</option>
+    <option :value="2">2</option>
+    <option :value="3">3</option>
+  </select>
+  <button @click="add">+</button>
+  ......
+</template>
+~~~
+~~~js
+methods: {
+  add()
+  {
+      //使用dispatch将请求转发到Vuex
+    this.$store.dispatch('add', this.number)
+  }
+}
+~~~
+~~~js
+// store/index.js中
+
+//接收组件传来的请求，并转发给mutations端，类似controller层
+const actions = {
+  add(context, value) {
+    context.commit('ADD', value) //在这里使用全大写，以区分Mutation中的方法与actions中的方法
+  }
+}
+
+//接收actions请求，并对数据进行业务逻辑处理，类似Service层
+const mutations = {
+  ADD(state, value) {
+    state.sum += value
+  }
+}
+
+//保存业务数据，类似Entity类
+const state = {
+  sum: 0 //当前的和
+}
+~~~
+当actions不引入外部数据，仅仅是转发请求时，可以让组件跳过actions用commit指令直接向mutations发送请求
+~~~js
+add() {
+      //标准流程
+      // this.$store.dispatch('add', this.number)
+      //简化流程： 当actions并不引入任何外部数据，仅仅是转发请求的时候，可以直接让组件跳过Actions将请求发送给mutations，注意此时的方法需要调用mutations中的方法
+      this.$store.commit('ADD',this.number)
+    }
+~~~
+### getters方法
+getters方法相当于Vuex中的计算属性，可以被所有组件调用  
+组件中
+~~~html
+<h1>放大十倍后:{{$store.getters.tenTimes}}</h1>
+~~~
+store/index.js中
+~~~js
+const getters = {
+    tenTimes(state){
+        return state.sum * 10
+    }
+}
+......
+export default new Vuex.Store({
+  //实际上使用的键值对同名时的简写形式
+  actions,
+  mutations,
+  state,
+  getters  //暴露出去让其他组件使用
+}
+~~~
+
+### mapState 与mapGetters
+mapState从机理上是自动生成对应的计算属性函数
+~~~js
+//index.js中
+const state = {
+  sum: 0, //当前的和
+  school: 'vanier',
+  course: 'cs'
+}
+~~~
+~~~js
+//组件中
+import {mapState} from 'vuex'  //引入mapState方法
+
+//在计算属性中定义mapState的内容
+computed:{
+  //对象写法
+...mapState({sum:'sum',school:'school',course:'course'})
+  //数组形式
+  //     ...mapState(['sum','school','course'])
+}
+~~~
+mapGetters与mapState用法一样
+
+### mapMutations与mapActions
+这两个方法与前两个用法类似，只是位置放置在methods内
+~~~js
+ methods: {
+    // add() {
+    //   //标准流程
+    //   // this.$store.dispatch('add', this.number)
+    //   //简化流程： 当actions并不引入任何外部数据，仅仅是转发请求的时候，可以直接让组件跳过Actions将请求发送给mutations，注意此时的方法需要调用mutations中的方法
+    //   this.$store.commit('ADD',this.number)
+    // },
+    // sub() {
+    //   this.$store.dispatch('sub', this.number)
+    // },
+
+    //借助mapMutations生成对应的方法，在方法中会调用commit向Mutations直接发起请求
+    //对象写法
+    ...mapMutations({add:'ADD',sub:'SUB'}),
+~~~
+需要注意的是，在原始的add方法与sub方法中是需要传递一个参数this.number的，所以在使用mapMutations时需要在模板中传入参数number
+~~~html
+<button @click="add(number)">+</button>
+<button @click="sub(number)">-</button>
+~~~
+另外mapMutations也有数组写法，但是使用数组写法时组件中的方法名与Mutations中的方法名必须一致
+~~~js
+//此时组件中的方法名也必须为ADD和SUB，所以最好组件、actions、mutations中的方法名都一致，方便使用
+...mapMutations(['ADD','SUB'])
+~~~
+mapActions的写法与mapMutations一致，会用dispatch方法向actions发起请求
+
+### Vuex模块化
+当多个组件的业务逻辑与状态（数据）都在vuex中管理时，可以根据组件或功能等将其分为不同的模块
+~~~js
+const module1_name = {
+    namespaced: true, //开启命名空间，命名空间可以在mapState等方法中使用，减少代码量
+    actions:{},
+    mutations:{},
+    state:{},
+    getters:{}
+}
+const module2_name = {
+  namespaced: true, 
+  actions:{},
+  mutations:{},
+  state:{},
+  getters:{}
+}
+
+export default new Vuex.Store({
+  modules:{
+    module1_name,
+    module2_name
+  }
+})
+~~~
+使用模块后，调用数据的路径就需要更改如下：
+~~~js
+this.$store.state.module1_name.sum
+~~~
+
+#### 命名空间
+命名空间可以用在mapState等方法中，减少代码量
+~~~js
+//其中'countOptions'即为命名空间，与modules中的键名一致
+...mapState('countOptions',{sum:'sum',school:'school',course:'course'})
+...mapMutations('countOptions',{add:'ADD',sub:'SUB',oddAdd:'ODDADD',intervalAdd:'INTERVALADD'})
+...mapGetters('countOptions',{tenTimes:'tenTimes'})
+~~~
