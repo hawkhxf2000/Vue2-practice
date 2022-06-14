@@ -463,12 +463,15 @@ methods: {
 ~~~
 
 ## 动画与过渡效果
+
 ### 单个元素实现动画效果
+
 在模板内使用transition标签包裹要实现动画效果的部分
+
 ~~~html
 <!--name定义css类选择器中的头部（第一个单词，如不设置name则默认为V-开头）-->
 <!--appear定义DOM加载时是否呈现动画效果，写appear代表开启，不写代表关闭-->
-<transition name="fade" appear> 
+<transition name="fade" appear>
     <h1 v-show="isShow">{{ msg }}</h1>
 </transition>
 ~~~
@@ -477,66 +480,78 @@ methods: {
 
 ~~~css
 /*这里的fade与模板中的transition标签的name属性对应*/
-.fade-enter-active{
-  animation: slideInLeft-enter 0.5s linear;
+.fade-enter-active {
+    animation: slideInLeft-enter 0.5s linear;
 }
-.fade-leave-active{
-  animation: slideInLeft-enter 0.5s reverse;
+
+.fade-leave-active {
+    animation: slideInLeft-enter 0.5s reverse;
 }
 
 @keyframes slideInLeft-enter {
-  from{
-    transform: translateX(-100%);
-  }
-  to{
-    transform: translateX(0px);
-  }
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0px);
+    }
 }
 ~~~
 
 - 使用过渡效果
+
 ~~~css
-h1{
-  background-color: orange;
-  /*第一种写法，谁要呈现动态效果就在谁身上加过渡效果*/
-  /*transition: 0.5s linear;*/
+h1 {
+    background-color: orange;
+    /*第一种写法，谁要呈现动态效果就在谁身上加过渡效果*/
+    /*transition: 0.5s linear;*/
 }
 
 /*进入的起点，退出的终点。*/
-.fade-enter, .fade-leave-to{  
-  transform: translateX(-100%);
+.fade-enter, .fade-leave-to {
+    transform: translateX(-100%);
 }
+
 /*第二种写法：利用-active类来实现过渡效果*/
-.fade-enter-active, .fade-leave-active{
-  transition: 0.5s linear;
+.fade-enter-active, .fade-leave-active {
+    transition: 0.5s linear;
 
 }
+
 /*进入的终点，退出的起点*/
-.fade-enter-to, .fade-leave{
-  transform: translateX(0);
+.fade-enter-to, .fade-leave {
+    transform: translateX(0);
 }
 ~~~
 
 ### 多个元素实现动画效果
+
 使用<transition-group>标签来实现多个元素的动画效果，注意在元素中需要加入key属性来区分元素的不同
+
 ~~~html
+
 <transition-group name="fade" appear>
-      <h1 v-show="isShow" key="1">{{ msg }}</h1>
-      <h1 v-show="isShow" key="2">Vanier</h1>
-    </transition-group>
+    <h1 v-show="isShow" key="1">{{ msg }}</h1>
+    <h1 v-show="isShow" key="2">Vanier</h1>
+</transition-group>
 ~~~
 
 ### 集成第三方动画库（animate.css)
+
 - 安装animate.css
+
 ~~~
 npm install animate.css --save
 ~~~
+
 - 导入animate.css  
-直接在需要使用的组件中导入
+  直接在需要使用的组件中导入
+
 ~~~js
 <script>
-  import 'animate.css'
+    import 'animate.css'
 ~~~
+
 - 在模板中直接使用animate.css的类
 - ~~~html
   <!-- 配置三个属性:name，enter-active-class与leave-active-class-->
@@ -548,107 +563,133 @@ npm install animate.css --save
       <h1 v-show="isShow" key="1">{{ msg }}</h1>
     </transition>
   ~~~
-  
+
 ## 插槽
+
 组件调用时可能需要在复用同一个子组件的结构时需要显示一些不同的内容. 而插槽就是在子组件设置一个空位，让组件调用者可以在调用时插入一些定制化的结构（先挖坑再填）
+
 ### 默认插槽
+
 子组件端
+
 ~~~vue
 <!--Category子组件-->
 <template>
-<div class="container">
-  <h3>{{title}}分类</h3>
-<!--  插槽中可以设置默认值,如果组件调用者没有传入结构,则显示默认值-->
-  <slot>我是默认值</slot>
-</div>
+  <div class="container">
+    <h3>{{title}}分类</h3>
+    <!--  插槽中可以设置默认值,如果组件调用者没有传入结构,则显示默认值-->
+    <slot>我是默认值</slot>
+  </div>
 </template>
 ~~~
+
 组件调用端
+
 ~~~vue
 <!--App组件-->
 <Category title="美食">
 <!--将img插入插槽中,在子组件内显示-->
-     <img src="https://ichef.bbci.co.uk/news/999/cpsprodpb/15951/production/_117310488_16.jpg" alt="">
-   </Category>
+<img src="https://ichef.bbci.co.uk/news/999/cpsprodpb/15951/production/_117310488_16.jpg" alt="">
+</Category>
 ~~~
+
 ### 具名插槽
+
 当一个子组件中可能存在多个插槽时,需要对插槽命名以便于在组件调用方准确插入适当的结构  
 子组件端
+
 ~~~vue
+
 <template>
-<div class="container">
-  <h3>{{title}}分类</h3>
-<!--  在slot中使用name属性标识-->
-  <slot name="center">我是默认值</slot>
-  <slot name="footer"></slot>
-</div>
+  <div class="container">
+    <h3>{{title}}分类</h3>
+    <!--  在slot中使用name属性标识-->
+    <slot name="center">我是默认值</slot>
+    <slot name="footer"></slot>
+  </div>
 </template>
 ~~~
+
 组件调用端
+
 ~~~vue
+
 <Category title="美食">
 <!--在组件调用端使用v-slot来对接同名的slot,将内容插入对应的slot-->
-     <template v-slot:center>
-     <img src="https://ichef.bbci.co.uk/news/999/cpsprodpb/15951/production/_117310488_16.jpg" alt="">
-     </template>
+<template v-slot:center>
+  <img src="https://ichef.bbci.co.uk/news/999/cpsprodpb/15951/production/_117310488_16.jpg" alt="">
+</template>
 
-     <template v-slot:footer>
-       <a href="">所需食材</a>
-       <a href="">烹饪流程</a>
-     </template>
-   </Category>
+<template v-slot:footer>
+  <a href="">所需食材</a>
+  <a href="">烹饪流程</a>
+</template>
+</Category>
 ~~~
+
 ### 作用域插槽
+
 当数据保存在子组件时，组件调用者无法使用子组件的数据来渲染页面，这时需要使用作用域插槽将数据传递到组件调用方来进行渲染  
 子组件端
+
 ~~~vue
+
 <template>
-<div class="container">
-  <h3>{{title}}分类</h3>
-  <slot name="center" :youxis="games" >我是默认值</slot>
-  <slot name="footer" :movies="movies"></slot>
-</div>
+  <div class="container">
+    <h3>{{title}}分类</h3>
+    <slot name="center" :youxis="games">我是默认值</slot>
+    <slot name="footer" :movies="movies"></slot>
+  </div>
 </template>
 ~~~
+
 ~~~vue
 data(){
-    return{
-      games:['古墓丽影','半条命','最终幻想7','无主之地'],
-      movies:['生化危机','壮志凌云']
-    }
-  }
+return{
+games:['古墓丽影','半条命','最终幻想7','无主之地'],
+movies:['生化危机','壮志凌云']
+}
+}
 ~~~
+
 组件调用端
+
 ~~~vue
+
 <Category ref="games" title="游戏">
-      <!--      slotProps是一个对象，里面包含了在子组件中绑定的所有数据，我们需要从中提取games这个属性才能获得这个部分相对应的数据，这个名字需要与子组件被绑定的属性名（youxis）一致-->
-      <template v-slot:center="slotProps">
-        <ul>
-          <li v-for="(game, index) in slotProps.youxis" :key="index">{{ game }}</li>
-        </ul>
-      </template>
-    </Category>
+<!--      slotProps是一个对象，里面包含了在子组件中绑定的所有数据，我们需要从中提取games这个属性才能获得这个部分相对应的数据，这个名字需要与子组件被绑定的属性名（youxis）一致-->
+<template v-slot:center="slotProps">
+  <ul>
+    <li v-for="(game, index) in slotProps.youxis" :key="index">{{ game }}</li>
+  </ul>
+</template>
+</Category>
 
-    <Category title="影视">
-      <template v-slot:center>
-        <video controls src="https://youtu.be/uIdjcDTc9Vk"/>
-      </template>
+<Category title="影视">
+<template v-slot:center>
+  <video controls src="https://youtu.be/uIdjcDTc9Vk"/>
+</template>
 
-      <template ref="movies" v-slot:footer="slotProps">
-        <ul>
-          <li v-for="(movie, index) in slotProps.movies" :key="index">{{ movie }}</li>
-        </ul>
-      </template>
-    </Category>
+<template ref="movies" v-slot:footer="slotProps">
+  <ul>
+    <li v-for="(movie, index) in slotProps.movies" :key="index">{{ movie }}</li>
+  </ul>
+</template>
+</Category>
 ~~~
+
 ## Vuex
+
 ###安装Vuex
+
 ~~~
 npm install vuex@3 --save
 ~~~
 
 ### 搭建环境
+
 在src文件夹下创建一个store文件夹，在其中创建index.js文件
+
 ~~~js
 /该文件用于创建Vuex中最为核心的Store
 import Vue from "vue";
@@ -658,143 +699,160 @@ import Vuex from "vuex";
 Vue.use(Vuex)
 
 //定义actions,用于相应组件中的动作
-const actions= {
-
-}
+const actions = {}
 
 //定义mutations, 用于操作数据(state)
-const mutations = {
-
-}
+const mutations = {}
 
 //定义state,用于存储数据
-const state = {
-
-}
+const state = {}
 
 export default new Vuex.Store({
-  //实际上使用的键值对同名时的简写形式
-  actions,
-  mutations,
-  state
+    //实际上使用的键值对同名时的简写形式
+    actions,
+    mutations,
+    state
 })
 ~~~
+
 在main.js文件中引入store
+
 ~~~js
 import Store from "@/store";
+
 ......
 new Vue({
-  render: h => h(App),
-  Store,
-  beforeCreate() {
-    Vue.prototype.$bus = this  //安装全局事件总线
-  }
+    render: h => h(App),
+    Store,
+    beforeCreate() {
+        Vue.prototype.$bus = this  //安装全局事件总线
+    }
 ~~~
 
 ### 应用Vuex模式
+
 组件端
+
 ~~~html
+
 <template>
-  ......
-  <h1>当前求和为：{{ $store.state.sum }}</h1>
-  <select v-model="number">
-    <option :value="1">1</option>
-    <option :value="2">2</option>
-    <option :value="3">3</option>
-  </select>
-  <button @click="add">+</button>
-  ......
+    ......
+    <h1>当前求和为：{{ $store.state.sum }}</h1>
+    <select v-model="number">
+        <option :value="1">1</option>
+        <option :value="2">2</option>
+        <option :value="3">3</option>
+    </select>
+    <button @click="add">+</button>
+    ......
 </template>
 ~~~
+
 ~~~js
 methods: {
-  add()
-  {
-      //使用dispatch将请求转发到Vuex
-    this.$store.dispatch('add', this.number)
-  }
+    add()
+    {
+        //使用dispatch将请求转发到Vuex
+        this.$store.dispatch('add', this.number)
+    }
 }
 ~~~
+
 ~~~js
 // store/index.js中
 
 //接收组件传来的请求，并转发给mutations端，类似controller层
 const actions = {
-  add(context, value) {
-    context.commit('ADD', value) //在这里使用全大写，以区分Mutation中的方法与actions中的方法
-  }
+    add(context, value) {
+        context.commit('ADD', value) //在这里使用全大写，以区分Mutation中的方法与actions中的方法
+    }
 }
 
 //接收actions请求，并对数据进行业务逻辑处理，类似Service层
 const mutations = {
-  ADD(state, value) {
-    state.sum += value
-  }
+    ADD(state, value) {
+        state.sum += value
+    }
 }
 
 //保存业务数据，类似Entity类
 const state = {
-  sum: 0 //当前的和
+    sum: 0 //当前的和
 }
 ~~~
+
 当actions不引入外部数据，仅仅是转发请求时，可以让组件跳过actions用commit指令直接向mutations发送请求
+
 ~~~js
-add() {
-      //标准流程
-      // this.$store.dispatch('add', this.number)
-      //简化流程： 当actions并不引入任何外部数据，仅仅是转发请求的时候，可以直接让组件跳过Actions将请求发送给mutations，注意此时的方法需要调用mutations中的方法
-      this.$store.commit('ADD',this.number)
-    }
+add()
+{
+    //标准流程
+    // this.$store.dispatch('add', this.number)
+    //简化流程： 当actions并不引入任何外部数据，仅仅是转发请求的时候，可以直接让组件跳过Actions将请求发送给mutations，注意此时的方法需要调用mutations中的方法
+    this.$store.commit('ADD', this.number)
+}
 ~~~
+
 ### getters方法
+
 getters方法相当于Vuex中的计算属性，可以被所有组件调用  
 组件中
+
 ~~~html
 <h1>放大十倍后:{{$store.getters.tenTimes}}</h1>
 ~~~
+
 store/index.js中
+
 ~~~js
 const getters = {
-    tenTimes(state){
+    tenTimes(state) {
         return state.sum * 10
     }
 }
 ......
 export default new Vuex.Store({
-  //实际上使用的键值对同名时的简写形式
-  actions,
-  mutations,
-  state,
-  getters  //暴露出去让其他组件使用
+    //实际上使用的键值对同名时的简写形式
+    actions,
+    mutations,
+    state,
+    getters  //暴露出去让其他组件使用
 }
 ~~~
 
 ### mapState 与mapGetters
+
 mapState从机理上是自动生成对应的计算属性函数
+
 ~~~js
 //index.js中
 const state = {
-  sum: 0, //当前的和
-  school: 'vanier',
-  course: 'cs'
+    sum: 0, //当前的和
+    school: 'vanier',
+    course: 'cs'
 }
 ~~~
+
 ~~~js
 //组件中
 import {mapState} from 'vuex'  //引入mapState方法
 
 //在计算属性中定义mapState的内容
 computed:{
-  //对象写法
-...mapState({sum:'sum',school:'school',course:'course'})
-  //数组形式
-  //     ...mapState(['sum','school','course'])
+    //对象写法
+...
+    mapState({sum: 'sum', school: 'school', course: 'course'})
+    //数组形式
+    //     ...mapState(['sum','school','course'])
 }
 ~~~
+
 mapGetters与mapState用法一样
 
 ### mapMutations与mapActions
+
 这两个方法与前两个用法类似，只是位置放置在methods内
+
 ~~~js
  methods: {
     // add() {
@@ -809,55 +867,317 @@ mapGetters与mapState用法一样
 
     //借助mapMutations生成对应的方法，在方法中会调用commit向Mutations直接发起请求
     //对象写法
-    ...mapMutations({add:'ADD',sub:'SUB'}),
+...
+    mapMutations({add: 'ADD', sub: 'SUB'}),
 ~~~
+
 需要注意的是，在原始的add方法与sub方法中是需要传递一个参数this.number的，所以在使用mapMutations时需要在模板中传入参数number
+
 ~~~html
+
 <button @click="add(number)">+</button>
 <button @click="sub(number)">-</button>
 ~~~
+
 另外mapMutations也有数组写法，但是使用数组写法时组件中的方法名与Mutations中的方法名必须一致
+
 ~~~js
 //此时组件中的方法名也必须为ADD和SUB，所以最好组件、actions、mutations中的方法名都一致，方便使用
-...mapMutations(['ADD','SUB'])
+...
+mapMutations(['ADD', 'SUB'])
 ~~~
+
 mapActions的写法与mapMutations一致，会用dispatch方法向actions发起请求
 
 ### Vuex模块化
+
 当多个组件的业务逻辑与状态（数据）都在vuex中管理时，可以根据组件或功能等将其分为不同的模块
+
 ~~~js
 const module1_name = {
     namespaced: true, //开启命名空间，命名空间可以在mapState等方法中使用，减少代码量
-    actions:{},
-    mutations:{},
-    state:{},
-    getters:{}
+    actions: {},
+    mutations: {},
+    state: {},
+    getters: {}
 }
 const module2_name = {
-  namespaced: true, 
-  actions:{},
-  mutations:{},
-  state:{},
-  getters:{}
+    namespaced: true,
+    actions: {},
+    mutations: {},
+    state: {},
+    getters: {}
 }
 
 export default new Vuex.Store({
-  modules:{
-    module1_name,
-    module2_name
-  }
+    modules: {
+        module1_name,
+        module2_name
+    }
 })
 ~~~
+
 使用模块后，调用数据的路径就需要更改如下：
+
 ~~~js
 this.$store.state.module1_name.sum
 ~~~
 
 #### 命名空间
+
 命名空间可以用在mapState等方法中，减少代码量
+
 ~~~js
 //其中'countOptions'即为命名空间，与modules中的键名一致
-...mapState('countOptions',{sum:'sum',school:'school',course:'course'})
-...mapMutations('countOptions',{add:'ADD',sub:'SUB',oddAdd:'ODDADD',intervalAdd:'INTERVALADD'})
-...mapGetters('countOptions',{tenTimes:'tenTimes'})
+...
+mapState('countOptions', {sum: 'sum', school: 'school', course: 'course'})
+...
+mapMutations('countOptions', {add: 'ADD', sub: 'SUB', oddAdd: 'ODDADD', intervalAdd: 'INTERVALADD'})
+...
+mapGetters('countOptions', {tenTimes: 'tenTimes'})
+~~~
+
+## Vue-Router
+
+### 安装Vue-Router
+
+因为使用的脚手架是Vue2，所以需要在vue-router后面注明使用Vue-router@3版本，现在默认安装Vue-router4 版本，是与Vue3搭配使用的
+
+~~~
+npm i vue-router@3 --save
+~~~
+
+### 引入Vue-Router
+
+~~~js
+//在main.js中引入路由器
+//引入Vue-router
+import VueRouter from "vue-router";
+//使用路由器
+Vue.use(VueRouter)
+~~~
+
+### 配置路由器
+
+新建一个文件夹router,在文件夹下新建文件index.js(与Vuex类似)
+在index.js中写入：
+
+~~~js
+//该文件专门用于创建整个应用的路由器
+
+import VueRouter from "vue-router";
+
+//引入需要进行路由管理的组件
+import About from "@/Pages/About";
+import Home from "@/Pages/Home";
+
+//创建路由器规则
+export default new VueRouter({
+    //路由器规则
+    routes: [
+        {
+            path: '/about',
+            component: About
+        },
+        {
+            path: '/home',
+            component: Home
+        },
+    ]
+})
+~~~
+
+### 将路由器规则导入main.js
+
+~~~js
+//引入路由器
+import router from "@/router";
+
+......
+// 将路由器加入Vue配置中
+new Vue({
+    render: h => h(App),
+    router, //加入路由器配置
+}).$mount('#app')
+~~~
+
+### 在App页面引入路由视图与切换
+
+~~~html
+<!--可以在router-link标签中加入样式类或其他参数-->
+<router-link to="/home">Home</router-link>
+<router-link to="/About">About</router-link>
+<!--......此处省略其他结构-->
+<!--在需要展示不同页面的位置插入router-view标签-->
+<div class="col-xs-6">
+    <div class="panel">
+        <div class="panel-body">
+            <router-view/>
+        </div>
+    </div>
+</div>
+~~~
+
+这样就可以在不同标签之间进行切换了，而且在这过程中不需要服务器传递页面，只是在组件间切换。每次切换时切换掉的组件会被销毁
+
+## 嵌套路由
+
+在main.js的相应上一级路由配置项中使用children配置项来定义下一级路由,注意需使用[]数组形式定义配置项
+
+- main.js:
+
+~~~js
+ {
+    path: '/home',
+        component
+:
+    Home,
+        children
+:
+    [
+        {path: 'news', component: News},
+        {path: 'message', component: Message},
+    ]
+}
+,
+~~~
+
+- 上一级路由父组件中使用router-link和router-view来渲染下一级路由子组件
+
+~~~vue
+
+<template>
+  <div>
+    <h2>我是Home的内容</h2>
+    <ul class="nav nav-tabs">
+      <li>
+        <router-link class="list-group-item" active-class="active" to="/home/news">news</router-link>
+      </li>
+      <li>
+        <router-link class="list-group-item" active-class="active" to="/home/message">messages</router-link>
+      </li>
+    </ul>
+    <router-view style="margin-top: 20px;"/>
+  </div>
+</template>
+~~~
+
+
+
+## 命名路由
+
+命名路由只需要在配置项内增加一个name配置
+
+~~~js
+{
+    name:'about',
+        path
+:
+    '/about',
+        component
+:
+    About
+}
+,
+~~~
+
+命名路由可以在多级路由下简化路径,另外在面包屑效果中可以作为名字显示
+main.js
+
+~~~js
+children:[
+    {name: 'content', path: 'message-content', component: MessageContent},
+]
+~~~
+
+组件中
+
+~~~vue
+
+<router-link :to="{
+          // path:'/home/message/message-content',  //字符串写法
+          name: 'content',
+          query:{
+            id: message.id,
+            title: message.title
+          }
+        }">{{ message.title }}
+</router-link>
+~~~
+## 路由传参
+### query传参
+
+利用vc身上的$route属性将参数传递给子路由组件
+main.js
+
+~~~js
+  path: 'message',
+    component:Message,
+    children:[
+    {path: 'message-content', component: MessageContent},
+]
+~~~
+
+父组件中：
+
+~~~vue
+
+<template>
+  <div>
+    <ul>
+      <li v-for="message of messageList" :key="message.id">
+        <!--        query字符串传参方法-->
+        <!--        <router-link :to="`/home/message/message-content?id=${message.id}&title=${message.title}`">{{ message.title }}</router-link>-->
+
+        <!--   query对象写法     -->
+        <router-link :to="{
+          path:'/home/message/message-content',
+          query:{
+            id: message.id,
+            title: message.title
+          }
+        }">{{ message.title }}
+        </router-link>
+      </li>
+    </ul>
+    <hr>
+    <router-view/>
+  </div>
+</template>
+~~~
+- 子路由直接使用$route中的query对象接收参数
+~~~vue
+  <li>消息编号：{{$route.query.id}}</li>
+<li>消息标题：{{$route.query.title}}</li>
+~~~
+
+### params传参
+params传参与query类似，但是使用路径符'/'代替参数列表?...&...
+- 在main.js中需要使用占位符
+~~~js
+ {
+    name: 'content',
+    // path: 'message-content',
+    path:'message-content/:id/:title',  //使用params传参时需要用占位符:id,:title占位
+    component: MessageContent
+},
+~~~
+- 父组件中
+~~~vue
+<router-link :to="`/home/message/message-content/${message.id}/${message.title}`">{{ message.title }}</router-link>
+~~~
+也可使用对象写法
+~~~vue
+  <router-link :to="{
+          name: 'content',               //使用Params传参必须使用命名路由方法
+          params:{                       //将此处改为params即为params传参
+            id: message.id,
+            title: message.title
+          }
+        }">{{ message.title }}</router-link>
+~~~
+- 子组件中用params接收数据
+~~~vue
+ <li>消息编号：{{$route.params.id}}</li>
+    <li>消息标题：{{$route.params.title}}</li>
 ~~~
