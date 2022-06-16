@@ -5,9 +5,7 @@
         <li><router-link class="list-group-item" active-class="active" to="/home/news">news</router-link></li>
         <li ><router-link class="list-group-item" active-class="active" to="/home/message">messages</router-link></li>
       </ul>
-    <keep-alive include="News">
     <router-view style="margin-top: 20px;"/>
-    </keep-alive>
   </div>
 </template>
 

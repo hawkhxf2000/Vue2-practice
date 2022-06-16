@@ -37,12 +37,12 @@ export default new VueRouter({
                             // props:{id:001,title:message1}
 
                             //props的第二种写法,值为boolean值。若boolean为真，就会把该路由组建收到的所有params参数，以props的形式传给MessageContent组件
-                            props:true
+                            // props:true
 
                             //props的第三种写法，值为函数,可以传递query或params的参数
-                            // props($route){
-                            //     return {id:$route.query.id, title:$route.query.title}
-                            // }
+                            props($route){
+                                return {id:$route.query.id, title:$route.query.title}
+                            }
                         },
                     ]
                 },

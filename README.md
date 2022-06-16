@@ -1181,3 +1181,88 @@ params传参与query类似，但是使用路径符'/'代替参数列表?...&...
  <li>消息编号：{{$route.params.id}}</li>
     <li>消息标题：{{$route.params.title}}</li>
 ~~~
+
+### props传参
+在index.js的路由配置中使用props配置项传递参数
+- index.js
+~~~js
+{
+    name: 'content',
+    // path: 'message-content',
+    path:'message-content/:id/:title',  //使用params传参时需要用占位符:id,:title占位
+    component: MessageContent, 
+    //props有三种写法
+    //props的第一种写法，作为对象，该对象中的所有k-v都会以props的形式传给MessageContent组件,但只能写死，不能改变
+    // props:{id:001,title:message1}
+
+    //props的第二种写法,值为boolean值。若boolean为真，就会把该路由组建收到的所有params参数，以props的形式传给MessageContent组件
+    // props:true
+
+    //props的第三种写法，值为函数,可以传递query或params的参数
+    props($route){
+        return {id:$route.params.id, title:$route.params.title}
+    }
+}
+~~~
+- 组件中：
+~~~vue
+export default {
+  name: "MessageContent",
+  props:['id','title']
+}
+~~~
+## 编程式路由导航
+利用$router中的方法可以对路由实现编程式导航，可以实现一些特殊需求，比如延迟几秒显示等
+组件中：
+~~~vue
+<button @click="pushShow(message)">push查看</button>
+<button @click="replaceShow(message)">replace查看</button>
+<!--------------------------------------------------------------------------->
+ methods: {
+    pushShow(message) {
+      this.$router.push({  //push是$router上的一个方法，将路由记录以压栈形式进行储存，历史可以进行前进回退
+        name: 'content',
+        params: {
+          id: message.id,
+          title: message.title
+        }
+      })
+    },
+    replaceShow(message) {
+      this.$router.replace({   //replace是另外一个方法，会将前一个路由记录替换掉，因此无法进行回退
+        name: 'content',
+        params: {
+          id: message.id,
+          title: message.title
+        }
+      })
+    }
+  }
+~~~
+## 缓存路由组件
+使用<keep-alive>标签将包括其中的路由组件缓存下来，不进行销毁，适合于保存用户输入的内容在未进行处理之前不被清除掉  
+Home.vue组件中
+~~~vue
+<keep-alive include="News">  //include中是指明需要被缓存的路由组件，如果不写，则缓存router-view包含的所有路由组件
+    <router-view style="margin-top: 20px;"/>
+</keep-alive>
+~~~
+
+## 路由组件独有的钩子函数activated, deactivated
+- activated钩子函数是在组件被激活（路由组件切换进主视图）时实现的钩子函数，而deactivated钩子函数则是在路由组件被切换出主视图时实现的钩子函数
+- 一般常用于组件被缓存时，由于组件被缓存不会被销毁，所以不能使用beforeDestroyed钩子函数来执行函数，这时候就可以用deactivated来实现
+~~~vue
+<li :style="{opacity}"><h3>欢迎学习Vue</h3></li>
+<!------------------------------------------------------------------>
+activated() {
+this.timer = setInterval(()=>{
+console.log('@')
+this.opacity -= 0.01
+if(this.opacity <= 0 )
+this.opacity = 1
+}, 16)
+},
+deactivated() {
+clearInterval(this.timer)
+}
+~~~
